@@ -221,6 +221,8 @@ void read_data_and_encode(AVFormatContext *fmt_ctx, //
                           FILE *outfile){
     
     int ret = 0;
+    int errcount = 0;
+    char errors[1024] = {0, };
     
     //pakcet
     AVPacket pkt;
@@ -250,17 +252,31 @@ void read_data_and_encode(AVFormatContext *fmt_ctx, //
     alloc_data_4_resample(&src_data, &src_linesize, &dst_data, &dst_linesize);
     
     //read data from device
-    while(ret = av_read_frame(fmt_ctx, &pkt) && rec_status) {
+    while(rec_status) {
         
-        //如果设备没有准备好，那就等一小会
+        ret = av_read_frame(fmt_ctx, &pkt);
         if(ret < 0){
+            //打印错误信息
+            av_strerror(ret, errors, 1024);
+            printf("err:%d, %s\n", ret, errors);
+
             if (ret == AVERROR(EAGAIN)) {
+
+                //连续5次则退出
+                if(5 == errcount++){
+                    break;
+                }
+
+                //如果设备没有准备好，那就等一小会
                 av_usleep(10000);
                 continue;
             }
 
             break;
         }
+
+        //清0
+        errcount = 0;
         
         //进行内存拷贝，按字节拷贝的
         memcpy((void*)src_data[0], (void*)pkt.data, pkt.size);
