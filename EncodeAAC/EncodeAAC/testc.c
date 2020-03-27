@@ -5,7 +5,20 @@
 //  Created by lichao on 2020/1/30.
 //  Copyright © 2020年 lichao. All rights reserved.
 //
-//
+
+/**
+ * 注意,进行AAC 编码时，一定要确保你使用的ffmpeg已经将 AAC 库编译进去了。
+ *
+ * 编译带 AAC 库的 ffmpeg 方法如下
+ * 1. 在你的操作系统上安装 AAC 库，在mac 下可以通过  brew install fdk-aac 进行安装
+ * 2. 重新执执 ./configure，./configure --prefix=/usr/local/ffmpeg --enable-fdk-aac
+ * 3. 编译安装ffmpeg
+ */
+
+/**
+ * 在使用该工程时，一定要记得将 Xcode 中的沙盒关掉。
+ */
+
 
 #include "testc.h"
 #include <string.h>
