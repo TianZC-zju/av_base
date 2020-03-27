@@ -6,20 +6,6 @@
 //  Copyright © 2020年 lichao. All rights reserved.
 //
 
-/**
- * 注意,进行AAC 编码时，一定要确保你使用的ffmpeg已经将 AAC 库编译进去了。
- *
- * 编译带 AAC 库的 ffmpeg 方法如下
- * 1. 在你的操作系统上安装 AAC 库，在mac 下可以通过  brew install fdk-aac 进行安装
- * 2. 重新执执 ./configure，./configure --prefix=/usr/local/ffmpeg --enable-fdk-aac
- * 3. 编译安装ffmpeg
- */
-
-/**
- * 在使用该工程时，一定要记得将 Xcode 中的沙盒关掉。
- */
-
-
 #include "testc.h"
 #include <string.h>
 
@@ -266,6 +252,12 @@ void read_data_and_encode(AVFormatContext *fmt_ctx, //
     //read data from device
     while((ret = av_read_frame(fmt_ctx, &pkt)) == 0 && rec_status) {
         
+        //如果设备没有准备好，那就等一小会
+        if (ret == AVERROR(EAGAIN)) {
+            av_usleep(10000);
+            continue;
+        }
+        
         //进行内存拷贝，按字节拷贝的
         memcpy((void*)src_data[0], (void*)pkt.data, pkt.size);
         
@@ -309,7 +301,7 @@ void rec_audio() {
     AVFormatContext *fmt_ctx = NULL;
     AVCodecContext *c_ctx = NULL;
     SwrContext* swr_ctx = NULL;
-
+    
     //set log level
     av_log_set_level(AV_LOG_DEBUG);
     
