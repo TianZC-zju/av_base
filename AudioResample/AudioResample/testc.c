@@ -135,12 +135,12 @@ void rec_audio() {
     if(src_data){
         av_freep(&src_data[0]);
     }
-    av_freep(&src_data);
+    av_freep(src_data);
     
     if(dst_data){
         av_freep(&dst_data[0]);
     }
-    av_freep(&dst_data);
+    av_freep(dst_data);
     
     //释放重采样的上下文
     swr_free(&swr_ctx);
