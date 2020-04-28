@@ -204,12 +204,12 @@ void free_data_4_resample(uint8_t **src_data, uint8_t **dst_data){
     if(src_data){
         av_freep(&src_data[0]);
     }
-    av_freep(&src_data);
+    av_freep(src_data);
     
     if(dst_data){
         av_freep(&dst_data[0]);
     }
-    av_freep(&dst_data);
+    av_freep(dst_data);
 }
 
 /**
